@@ -15,6 +15,8 @@ const SAFE_PIXEL = 2;
 const DEFAULT_COLOR = 'steelblue';
 
 export type BrushProps = {
+  /** The mouse button(s) that thiggers the Brush start event */
+  trigger?: 'left' | 'right' | 'any';
   /** Style object for the Brush selection rect. */
   selectedBoxStyle: React.SVGProps<SVGRectElement>;
   /** x-coordinate scale. */
@@ -69,6 +71,7 @@ export type BrushProps = {
 
 class Brush extends Component<BrushProps> {
   static defaultProps = {
+    trigger: 'any',
     xScale: null,
     yScale: null,
     onChange: null,
@@ -170,6 +173,7 @@ class Brush extends Component<BrushProps> {
 
   render() {
     const {
+      trigger,
       xScale,
       yScale,
       height,
@@ -233,6 +237,7 @@ class Brush extends Component<BrushProps> {
 
     return (
       <BaseBrush
+        trigger={trigger}
         width={brushRegionWidth}
         height={brushRegionHeight}
         left={left}
