@@ -70,8 +70,9 @@ export function getPageCoordinates(event: MouseTouchOrPointerEvent) {
   };
 }
 
-function getMouseButtonId(button: MouseButton) {
+export function getMouseButtonId(button: MouseButton) {
   if (typeof button === 'number') return button;
+  if (typeof button !== 'string') return -1;
 
   switch (button) {
     case 'left':
@@ -85,7 +86,12 @@ function getMouseButtonId(button: MouseButton) {
   }
 }
 
+function removeDuplicates<T>(array: T[]): T[] {
+  return Array.from(new Set(array));
+}
+
 export function numberalizeMouseButtonArray(array: MouseButtonArray | undefined) {
   if (typeof array === 'undefined') return [];
-  return Array.from(new Set([...array].map((b: MouseButton) => getMouseButtonId(b) as number)));
+  const arrayOfIds = [...array].map((b: MouseButton) => getMouseButtonId(b) as number);
+  return removeDuplicates(arrayOfIds);
 }

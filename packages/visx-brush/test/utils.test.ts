@@ -1,5 +1,10 @@
 import { createScale } from '@visx/scale';
-import { getDomainFromExtent, scaleInvert } from '../src/utils';
+import {
+  getDomainFromExtent,
+  scaleInvert,
+  getMouseButtonId,
+  numberalizeMouseButtonArray,
+} from '../src/utils';
 
 describe('getDomainFromExtent()', () => {
   test('it should return { start, end } if scale.invert', () => {
@@ -71,5 +76,29 @@ describe('scaleInvert()', () => {
     const value = 3;
     const result = scaleInvert(scale, value);
     expect(result).toBe(2);
+  });
+});
+
+describe('getMouseButtonId()', () => {
+  test('it should return 2 in the button provided as a number 2', () => {
+    const result = getMouseButtonId(2);
+    expect(result).toBe(2);
+  });
+
+  test('it should return 0 in the button provided as a button name `left`', () => {
+    const result = getMouseButtonId('left');
+    expect(result).toBe(0);
+  });
+
+  test('it should return -1 in the button provided as value thats not allowed', () => {
+    const result = getMouseButtonId('left');
+    expect(result).toBe(0);
+  });
+});
+
+describe('numberalizeMouseButtonArray()', () => {
+  test('it should return the array of button ids contains some of values: -1, 0, 1, 2', () => {
+    const result = numberalizeMouseButtonArray([0, 2, 'left', 'middle']);
+    expect([-1, 0, 1, 2]).toEqual(expect.arrayContaining(result));
   });
 });
