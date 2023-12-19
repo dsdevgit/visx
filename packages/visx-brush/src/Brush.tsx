@@ -7,6 +7,7 @@ import {
   MarginShape,
   Point,
   ResizeTriggerAreas,
+  MouseButton,
   MouseButtonArray,
   Scale,
 } from './types';
@@ -17,7 +18,7 @@ const DEFAULT_COLOR = 'steelblue';
 
 export type BrushProps = {
   /** Array of mouse buttons that will not trigger the Brush creation */
-  ignoreMouseButtons?: MouseButtonArray;
+  ignoreMouseButtons?: MouseButton | MouseButtonArray;
   /** Style object for the Brush selection rect. */
   selectedBoxStyle: React.SVGProps<SVGRectElement>;
   /** x-coordinate scale. */

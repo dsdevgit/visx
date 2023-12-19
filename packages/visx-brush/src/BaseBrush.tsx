@@ -14,6 +14,7 @@ import {
   PartialBrushStartEnd,
   BrushingType,
   BrushPageOffset,
+  MouseButton,
   MouseButtonArray,
 } from './types';
 import { getPageCoordinates, numberalizeMouseButtonArray } from './utils';
@@ -21,7 +22,7 @@ import { getPageCoordinates, numberalizeMouseButtonArray } from './utils';
 type PointerHandlerEvent = React.PointerEvent<SVGRectElement>;
 
 export type BaseBrushProps = {
-  ignoreMouseButtons?: MouseButtonArray;
+  ignoreMouseButtons?: MouseButton | MouseButtonArray;
   brushDirection?: 'horizontal' | 'vertical' | 'both';
   initialBrushPosition?: PartialBrushStartEnd;
   width: number;
