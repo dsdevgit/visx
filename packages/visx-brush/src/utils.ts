@@ -87,10 +87,5 @@ function getMouseButtonId(button: MouseButton) {
 
 export function numberalizeMouseButtonArray(array: MouseButtonArray | undefined) {
   if (typeof array === 'undefined') return [];
-  const result = Array.from(
-    new Set([...array].map((b: MouseButton) => getMouseButtonId(b) as number)),
-  );
-
-  console.log(result);
-  return result;
+  return Array.from(new Set([...array].map((b: MouseButton) => getMouseButtonId(b) as number)));
 }
