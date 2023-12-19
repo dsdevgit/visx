@@ -7,6 +7,7 @@ import {
   MarginShape,
   Point,
   ResizeTriggerAreas,
+  MouseButtonArray,
   Scale,
 } from './types';
 import { scaleInvert, getDomainFromExtent } from './utils';
@@ -15,8 +16,8 @@ const SAFE_PIXEL = 2;
 const DEFAULT_COLOR = 'steelblue';
 
 export type BrushProps = {
-  /** The mouse button(s) that thiggers the Brush start event */
-  trigger?: 'left' | 'right' | 'any';
+  /** Array of mouse buttons that will not trigger the Brush creation */
+  ignoreMouseButtons?: MouseButtonArray;
   /** Style object for the Brush selection rect. */
   selectedBoxStyle: React.SVGProps<SVGRectElement>;
   /** x-coordinate scale. */
@@ -71,7 +72,7 @@ export type BrushProps = {
 
 class Brush extends Component<BrushProps> {
   static defaultProps = {
-    trigger: 'any',
+    ignoreMouseButtons: [],
     xScale: null,
     yScale: null,
     onChange: null,
@@ -173,7 +174,7 @@ class Brush extends Component<BrushProps> {
 
   render() {
     const {
-      trigger,
+      ignoreMouseButtons,
       xScale,
       yScale,
       height,
@@ -237,7 +238,7 @@ class Brush extends Component<BrushProps> {
 
     return (
       <BaseBrush
-        trigger={trigger}
+        ignoreMouseButtons={ignoreMouseButtons}
         width={brushRegionWidth}
         height={brushRegionHeight}
         left={left}

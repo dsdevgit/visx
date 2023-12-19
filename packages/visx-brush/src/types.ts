@@ -60,3 +60,6 @@ type BrushScaleOutput = number | NumberLike | undefined;
 export type Scale<Output extends BrushScaleOutput = BrushScaleOutput> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   D3Scale<Output, any, any>;
+
+export type MouseButton = 'left' | 'middle' | 'right' | 0 | 1 | 2;
+export type MouseButtonArray = Array<MouseButton>;

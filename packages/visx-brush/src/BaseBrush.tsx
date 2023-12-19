@@ -14,14 +14,14 @@ import {
   PartialBrushStartEnd,
   BrushingType,
   BrushPageOffset,
+  MouseButtonArray,
 } from './types';
-import { getPageCoordinates } from './utils';
-import { MouseButton } from './constants';
+import { getPageCoordinates, numberalizeMouseButtonArray } from './utils';
 
 type PointerHandlerEvent = React.PointerEvent<SVGRectElement>;
 
 export type BaseBrushProps = {
-  trigger?: 'left' | 'right' | 'any';
+  ignoreMouseButtons?: MouseButtonArray;
   brushDirection?: 'horizontal' | 'vertical' | 'both';
   initialBrushPosition?: PartialBrushStartEnd;
   width: number;
@@ -90,7 +90,7 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
   private mouseDownTime: number = 0;
 
   static defaultProps = {
-    trigger: 'any',
+    ignoreMouseButtons: [],
     brushDirection: 'both',
     inheritedMargin: {
       left: 0,
@@ -296,14 +296,10 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
     }
   };
 
-  isDragAllowed = (event: PointerHandlerEvent): boolean => {
-    const { trigger } = this.props;
-    const buttom = event.button;
-    if (trigger === 'left' && buttom === MouseButton.Left) return true;
-    if (trigger === 'right' && buttom === MouseButton.Right) return true;
-    if (trigger === 'any' && (buttom === MouseButton.Left || buttom === MouseButton.Right))
-      return true;
-    return false;
+  isAllowedButton = (buttonId: number): boolean => {
+    const { ignoreMouseButtons } = this.props;
+    const ignoredIds = numberalizeMouseButtonArray(ignoreMouseButtons);
+    return !ignoredIds.includes(buttonId);
   };
 
   getExtent = (start: Partial<Point>, end: Partial<Point>) => {
@@ -629,7 +625,7 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
                   if (onClick && duration < clickSensitivity) onClick(event);
                 }}
                 onPointerDown={(event: PointerHandlerEvent) => {
-                  if (!this.isDragAllowed(event)) return;
+                  if (!this.isAllowedButton(event.button)) return;
                   this.mouseDownTime = Date.now();
                   dragStart(event);
                 }}

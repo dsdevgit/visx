@@ -1,6 +1,6 @@
 import { MouseTouchOrPointerEvent } from '@visx/drag/lib/useDrag';
 import React from 'react';
-import { Scale } from './types';
+import { Scale, MouseButton, MouseButtonArray } from './types';
 
 export function scaleInvert(scale: Scale, value: number) {
   // Test if the scale is an ordinalScale or not,
@@ -68,4 +68,29 @@ export function getPageCoordinates(event: MouseTouchOrPointerEvent) {
     pageX: pointerEvent.pageX,
     pageY: pointerEvent.pageY,
   };
+}
+
+function getMouseButtonId(button: MouseButton) {
+  if (typeof button === 'number') return button;
+
+  switch (button) {
+    case 'left':
+      return 0;
+    case 'middle':
+      return 1;
+    case 'right':
+      return 2;
+    default:
+      return -1;
+  }
+}
+
+export function numberalizeMouseButtonArray(array: MouseButtonArray | undefined) {
+  if (typeof array === 'undefined') return [];
+  const result = Array.from(
+    new Set([...array].map((b: MouseButton) => getMouseButtonId(b) as number)),
+  );
+
+  console.log(result);
+  return result;
 }
