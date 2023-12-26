@@ -193,34 +193,33 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
     const { brushingType } = this.state;
 
     if (useWindowMoveEvents && brushingType) {
-      this.updateBrush((prevBrush: BaseBrushState) => {
-        const { start, end, extent } = prevBrush;
+      this.updateBrush(
+        (prevBrush: BaseBrushState) => {
+          const { start, end, extent } = prevBrush;
 
-        start.x = Math.min(extent.x0, extent.x1);
-        start.y = Math.min(extent.y0, extent.y0);
-        end.x = Math.max(extent.x0, extent.x1);
-        end.y = Math.max(extent.y0, extent.y1);
+          start.x = Math.min(extent.x0, extent.x1);
+          start.y = Math.min(extent.y0, extent.y0);
+          end.x = Math.max(extent.x0, extent.x1);
+          end.y = Math.max(extent.y0, extent.y1);
 
-        let newState = {
-          ...prevBrush,
-          activeHandle: null,
-          isBrushing: false,
-          brushingType: undefined,
-        };
-
-        if (onBrushEnd) {
-          onBrushEnd(newState);
-        }
-
-        if (resetOnEnd) {
-          newState = {
-            ...newState,
-            ...this.getIdleState(),
+          let newState = {
+            ...prevBrush,
+            activeHandle: null,
+            isBrushing: false,
+            brushingType: undefined,
           };
-        }
 
-        return newState;
-      });
+          if (resetOnEnd) {
+            newState = {
+              ...newState,
+              ...this.getIdleState(),
+            };
+          }
+
+          return newState;
+        },
+        () => onBrushEnd?.(this.state),
+      );
     }
   };
 
@@ -345,9 +344,7 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
     };
     const end = { ...start };
 
-    if (onBrushStart) {
-      onBrushStart(start);
-    }
+    onBrushStart?.(start);
 
     this.updateBrush((prevBrush: BaseBrushState) => ({
       ...prevBrush,
@@ -403,36 +400,35 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
     const { onBrushEnd, resetOnEnd, useWindowMoveEvents } = this.props;
 
     if (!useWindowMoveEvents) {
-      this.updateBrush((prevBrush: BaseBrushState) => {
-        const { extent } = prevBrush;
-        let newState = {
-          ...prevBrush,
-          start: {
-            x: extent.x0,
-            y: extent.y0,
-          },
-          end: {
-            x: extent.x1,
-            y: extent.y1,
-          },
-          isBrushing: false,
-          brushingType: undefined,
-          activeHandle: null,
-        };
-
-        if (onBrushEnd) {
-          onBrushEnd(newState);
-        }
-
-        if (resetOnEnd) {
-          newState = {
-            ...newState,
-            ...this.getIdleState(),
+      this.updateBrush(
+        (prevBrush: BaseBrushState) => {
+          const { extent } = prevBrush;
+          let newState = {
+            ...prevBrush,
+            start: {
+              x: extent.x0,
+              y: extent.y0,
+            },
+            end: {
+              x: extent.x1,
+              y: extent.y1,
+            },
+            isBrushing: false,
+            brushingType: undefined,
+            activeHandle: null,
           };
-        }
 
-        return newState;
-      });
+          if (resetOnEnd) {
+            newState = {
+              ...newState,
+              ...this.getIdleState(),
+            };
+          }
+
+          return newState;
+        },
+        () => onBrushEnd?.(this.state),
+      );
     }
   };
 
@@ -536,16 +532,20 @@ export default class BaseBrush extends React.Component<BaseBrushProps, BaseBrush
     };
   };
 
-  updateBrush = (updater: UpdateBrush) => {
+  updateBrush = (updater: UpdateBrush, callback?: Function) => {
     const { onChange } = this.props;
     this.setState(updater, () => {
-      if (onChange) {
-        onChange(this.state);
-      }
+      onChange?.(this.state);
+      callback?.();
     });
   };
 
-  reset = () => this.updateBrush(() => this.getIdleState());
+  reset = () => {
+    this.updateBrush((prevBrush) => ({
+      ...prevBrush,
+      ...this.getIdleState(),
+    }));
+  };
 
   handleBrushingTypeChange = (type?: BrushingType, brushPageOffset?: BrushPageOffset) => {
     this.updateBrush((prevBrush: BaseBrushState) => {
